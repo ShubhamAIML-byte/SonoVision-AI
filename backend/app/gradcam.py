@@ -153,20 +153,23 @@ class ViTGradCAM:
 def create_gradcam_visualization(
     cam_norm: np.ndarray,
     original_rgb: np.ndarray,
-    alpha: float = 0.55,
+    alpha: float = 0.65,
+    threshold: float = 0.18,
     colormap: int = cv2.COLORMAP_JET
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Apply colormap to Grad-CAM heatmap and blend with original ultrasound image.
+    Uses clinical-grade adaptive alpha transparency to preserve crisp background ultrasound anatomy.
     
     Args:
         cam_norm: (224, 224) float array in [0, 1]
         original_rgb: (224, 224, 3) uint8 RGB array
-        alpha: Heatmap blend weight (0.0 to 1.0)
+        alpha: Peak heatmap blend weight (0.0 to 1.0)
+        threshold: Minimum attention cutoff below which background is kept 100% natural
         colormap: OpenCV colormap (default cv2.COLORMAP_JET)
         
     Returns:
-        overlay_rgb: (224, 224, 3) uint8 blended image
+        overlay_rgb: (224, 224, 3) uint8 blended image with clear background
         heatmap_rgb: (224, 224, 3) uint8 pure colormap image
     """
     # Scale CAM to 0..255 uint8
@@ -176,8 +179,13 @@ def create_gradcam_visualization(
     heatmap_bgr = cv2.applyColorMap(heatmap_uint8, colormap)
     heatmap_rgb = cv2.cvtColor(heatmap_bgr, cv2.COLOR_BGR2RGB)
     
-    # Blend with original ultrasound image
-    overlay = (alpha * heatmap_rgb.astype(np.float32) + (1.0 - alpha) * original_rgb.astype(np.float32))
+    # Adaptive alpha transparency mask
+    # Zero background fog: pixels with CAM < threshold keep alpha = 0 (crystal-clear ultrasound)
+    # Active focus regions ramp smoothly up to alpha
+    alpha_mask = np.clip((cam_norm - threshold) / (0.55 - threshold + 1e-6), 0.0, 1.0) * alpha
+    alpha_mask_3d = alpha_mask[:, :, np.newaxis].astype(np.float32)
+    
+    overlay = (alpha_mask_3d * heatmap_rgb.astype(np.float32) + (1.0 - alpha_mask_3d) * original_rgb.astype(np.float32))
     overlay_rgb = np.clip(overlay, 0, 255).astype(np.uint8)
     
     return overlay_rgb, heatmap_rgb
