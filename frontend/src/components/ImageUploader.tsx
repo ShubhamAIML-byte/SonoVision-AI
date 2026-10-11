@@ -10,6 +10,7 @@ interface ImageUploaderProps {
   selectedPreview: string | null;
   onClear: () => void;
   onSelectSample: (sample: SampleCase) => void;
+  onFileSelect: (file: File, previewUrl: string) => void;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -18,6 +19,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   selectedPreview,
   onClear,
   onSelectSample,
+  onFileSelect,
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -27,21 +29,29 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   const processFile = (file: File) => {
     setErrorMsg(null);
-    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp", "image/bmp"];
-    if (!validTypes.includes(file.type)) {
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const validExts = ["png", "jpg", "jpeg", "bmp", "webp", "tif", "tiff"];
+    const isImage = file.type.startsWith("image/") || validExts.includes(ext);
+
+    if (!isImage) {
       setErrorMsg("Please upload a valid ultrasound image file (PNG, JPG, or JPEG).");
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setErrorMsg("Image size exceeds maximum limit of 10 MB.");
+
+    if (file.size > 15 * 1024 * 1024) {
+      setErrorMsg("Image size exceeds maximum limit of 15 MB.");
       return;
     }
 
     setSelectedFile(file);
     const reader = new FileReader();
+    reader.onerror = () => {
+      setErrorMsg("Failed to read image file.");
+    };
     reader.onload = (e) => {
       if (e.target?.result) {
-        // Parent preview is updated or local
+        const previewUrl = e.target.result as string;
+        onFileSelect(file, previewUrl);
       }
     };
     reader.readAsDataURL(file);
@@ -77,8 +87,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     try {
       setAnalysisStep(1);
-      const timer1 = setTimeout(() => setAnalysisStep(2), 500);
-      const timer2 = setTimeout(() => setAnalysisStep(3), 1200);
+      const timer1 = setTimeout(() => setAnalysisStep(2), 400);
+      const timer2 = setTimeout(() => setAnalysisStep(3), 900);
 
       if (selectedFile) {
         await onAnalyze(selectedFile);
@@ -97,6 +107,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     } finally {
       setAnalysisStep(0);
     }
+  };
+
+  const handleClearImage = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    onClear();
   };
 
   return (
@@ -118,7 +136,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png, image/jpeg, image/jpg"
+          accept="image/*,.png,.jpg,.jpeg,.bmp,.webp"
           onChange={handleChange}
           className="hidden"
         />
@@ -169,10 +187,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               </button>
 
               <button
-                onClick={() => {
-                  setSelectedFile(null);
-                  onClear();
-                }}
+                onClick={handleClearImage}
                 disabled={isAnalyzing}
                 className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 font-medium transition-colors text-sm disabled:opacity-50"
               >
@@ -190,7 +205,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               Upload Breast Ultrasound Scan
             </h3>
             <p className="mt-1 text-sm text-slate-400 max-w-sm">
-              Drag & drop your B-mode ultrasound image, or browse your device. Supported formats: PNG, JPG, JPEG (Max 10MB).
+              Drag & drop your B-mode ultrasound image, or browse your device. Supported formats: PNG, JPG, JPEG (Max 15MB).
             </p>
 
             <button

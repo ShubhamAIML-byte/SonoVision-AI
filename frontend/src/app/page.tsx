@@ -19,6 +19,7 @@ import { Activity, ShieldCheck, Sparkles, Layers, Cpu, ArrowRight } from "lucide
 
 export default function HomePage() {
   const [selectedPreview, setSelectedPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [predictionResult, setPredictionResult] = useState<PredictionResult | null>(null);
   const [metrics, setMetrics] = useState<EvaluationMetrics>(DEFAULT_METRICS);
@@ -48,12 +49,20 @@ export default function HomePage() {
     }
   };
 
+  const handleFileSelect = (file: File, previewUrl: string) => {
+    setSelectedFile(file);
+    setSelectedPreview(previewUrl);
+    setPredictionResult(null);
+  };
+
   const handleSelectSample = async (sample: SampleCase) => {
+    setSelectedFile(null);
     setSelectedPreview(sample.imageSrc);
     setPredictionResult(null);
   };
 
   const handleClear = () => {
+    setSelectedFile(null);
     setSelectedPreview(null);
     setPredictionResult(null);
   };
@@ -103,6 +112,7 @@ export default function HomePage() {
                   selectedPreview={selectedPreview}
                   onClear={handleClear}
                   onSelectSample={handleSelectSample}
+                  onFileSelect={handleFileSelect}
                 />
               </div>
 
