@@ -1,0 +1,13 @@
+{
+  "classes": ["benign", "malignant", "normal"],
+  "matrix": [
+    {"actual": "benign", "predicted_benign": 82, "predicted_malignant": 3, "predicted_normal": 2},
+    {"actual": "malignant", "predicted_benign": 2, "predicted_malignant": 39, "predicted_normal": 1},
+    {"actual": "normal", "predicted_benign": 3, "predicted_malignant": 2, "predicted_normal": 22}
+  ],
+  "raw_matrix": [
+    [82, 3, 2],
+    [2, 39, 1],
+    [3, 2, 22]
+  ]
+}
