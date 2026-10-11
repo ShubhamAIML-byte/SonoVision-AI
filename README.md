@@ -4,7 +4,11 @@
 [![PyTorch 2.x](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch)](https://pytorch.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![ViT-B/16](https://img.shields.io/badge/Vision_Transformer-ViT--B%2F16-blue)](https://arxiv.org/abs/2010.11929)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-success?logo=vercel)](https://frontend-eight-puce-53.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> 🌐 **Live Web Application**: [https://frontend-eight-puce-53.vercel.app](https://frontend-eight-puce-53.vercel.app)  
+> 📦 **GitHub Repository**: [https://github.com/ShubhamAIML-byte/SonoVision-AI](https://github.com/ShubhamAIML-byte/SonoVision-AI)
 
 **SonoVision AI** is an advanced, production-grade Computer-Aided Diagnosis (CADx) system for breast cancer classification and spatial explainability. Built as a Master of Technology (M.Tech) capstone project, it leverages a fine-tuned **Vision Transformer (`ViT-B/16`)** backbone trained on the **BUSI (Breast Ultrasound Images)** dataset, coupled with a specialized **Patch-Token Gradient-Weighted Class Activation Mapping (Grad-CAM)** algorithm and a responsive dashboard built with **Next.js, TypeScript, and Tailwind CSS**.
 
