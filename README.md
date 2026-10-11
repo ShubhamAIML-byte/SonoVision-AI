@@ -15,6 +15,7 @@
 ---
 
 ## 📑 Table of Contents
+- [🔬 DeepBench: Research Model Comparison Studio](#-deepbench-research-model-comparison-studio)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
 - [Model Evaluation & Held-Out Results](#-model-evaluation--held-out-results)
@@ -26,6 +27,20 @@
 - [Vercel & 24/7 Cloud Deployment](#-vercel--247-cloud-deployment)
 - [Hardware Requirements & Limitations](#-hardware-requirements--limitations)
 - [Clinical & Regulatory Disclaimer](#-clinical--regulatory-disclaimer)
+
+---
+
+## 🔬 DeepBench: Research Model Comparison Studio
+
+DeepBench is an interactive multimodal research suite running natively in the Next.js web application on Vercel. Researchers can provide **important images** (arXiv / CVPR benchmark tables, ROC curves, Pareto trade-off plots, leaderboard screenshots) via file upload or **`Ctrl+V` clipboard paste**. The application extracts the data via multimodal vision AI and generates an interactive deep learning research dashboard.
+
+- 📈 **Dynamic Pareto Frontier Curve**: Interactive scatter chart highlighting Pareto-optimal architectures across user-selected axes (Top-1 Acc / F1 vs. Latency / Parameters / FLOPs).
+- 🧭 **Multi-Metric Radar Profiler**: 5-axis capability profiling (Accuracy, Latency Efficiency, Param Efficiency, Compute Efficiency, Robustness).
+- 📊 **Metric Leaderboard**: Sortable horizontal bar charts ranking models by Top-1, Top-5, Latency, Params, and FLOPs with architecture family color badges.
+- ⚖️ **Head-to-Head Architecture Matchup**: Side-by-side differential analysis calculating exact percentage gains ($\Delta$) and speedup ratios.
+- 📋 **Extracted Data Ledger & Live Spreadsheet**: Search, filter, edit any metric cell in-place, add custom lab runs, and export to CSV, JSON, or Markdown tables.
+- 🧠 **AI Architectural Synthesis**: Deep learning trade-off analysis (inductive bias vs self-attention, memory bandwidth limits) and edge-to-cloud deployment recommendations.
+- 📄 Full documentation available at [`docs/RESEARCH_STUDIO.md`](./docs/RESEARCH_STUDIO.md).
 
 ---
 

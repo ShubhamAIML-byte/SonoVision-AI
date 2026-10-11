@@ -1,10 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Activity, ShieldCheck, Cpu, Github, ExternalLink, Menu, X } from "lucide-react";
+import {
+  Activity,
+  BarChart2,
+  Cpu,
+  Github,
+  Menu,
+  X,
+  Sparkles,
+  Layers,
+} from "lucide-react";
 import { checkApiHealth } from "@/lib/api";
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  activeView?: "studio" | "clinical";
+  onViewChange?: (view: "studio" | "clinical") => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  activeView = "studio",
+  onViewChange,
+}) => {
   const [backendStatus, setBackendStatus] = useState<"checking" | "online" | "offline">("checking");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -17,48 +34,55 @@ export const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-navy-950/80 border-b border-slate-800/80">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-navy-950/85 border-b border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-sky-400 p-0.5 shadow-lg shadow-cyan-500/20">
               <div className="w-full h-full bg-navy-900 rounded-[10px] flex items-center justify-center">
-                <Activity className="w-5 h-5 text-cyan-400 animate-pulse" />
+                <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
               </div>
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xl font-bold tracking-tight text-white">
-                  SonoVision <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-sky-400">AI</span>
+                  DeepBench <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-300">AI</span>
                 </span>
                 <span className="text-[10px] uppercase font-mono tracking-widest px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                  ViT-B/16
+                  Research Vercel Suite
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 -mt-0.5 hidden sm:block">
-                Breast Ultrasound Transformer & Grad-CAM
+                Multimodal Image Extraction & Deep Learning Model Comparison
               </p>
             </div>
           </div>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
-            <a href="#analyzer" className="hover:text-cyan-400 transition-colors">
-              Diagnostic Analyzer
-            </a>
-            <a href="#explainability" className="hover:text-cyan-400 transition-colors">
-              ViT Grad-CAM
-            </a>
-            <a href="#metrics" className="hover:text-cyan-400 transition-colors">
-              Evaluation Metrics
-            </a>
-            <a href="#architecture" className="hover:text-cyan-400 transition-colors">
-              ViT Architecture
-            </a>
-            <a href="#dataset" className="hover:text-cyan-400 transition-colors">
-              BUSI Dataset
-            </a>
+          {/* Center Mode Switcher Tabs */}
+          <div className="hidden md:flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+            <button
+              onClick={() => onViewChange?.("studio")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 ${
+                activeView === "studio"
+                  ? "bg-gradient-to-r from-cyan-500 to-sky-500 text-navy-950 shadow-md shadow-cyan-500/20 font-bold"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <BarChart2 className="w-3.5 h-3.5" />
+              <span>Research Benchmark Studio</span>
+            </button>
+            <button
+              onClick={() => onViewChange?.("clinical")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 ${
+                activeView === "clinical"
+                  ? "bg-gradient-to-r from-teal-500 to-emerald-500 text-navy-950 shadow-md shadow-teal-500/20 font-bold"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Ultrasound ViT CADx</span>
+            </button>
           </div>
 
           {/* Right Status Pill & Actions */}
@@ -68,17 +92,11 @@ export const Navbar: React.FC = () => {
                 className={`w-2 h-2 rounded-full ${
                   backendStatus === "online"
                     ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"
-                    : backendStatus === "checking"
-                    ? "bg-amber-400 animate-ping"
                     : "bg-cyan-400"
                 }`}
               />
               <span className="text-slate-300">
-                {backendStatus === "online"
-                  ? "FastAPI PyTorch Online"
-                  : backendStatus === "checking"
-                  ? "Connecting..."
-                  : "Production Ready"}
+                {backendStatus === "online" ? "FastAPI Online" : "Vercel Cloud Ready"}
               </span>
             </div>
 
@@ -87,7 +105,7 @@ export const Navbar: React.FC = () => {
               target="_blank"
               rel="noreferrer"
               className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-colors"
-              title="View Repository"
+              title="View Source"
             >
               <Github className="w-4 h-4" />
             </a>
@@ -107,42 +125,35 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden px-4 pt-2 pb-4 bg-navy-900/95 border-b border-slate-800 space-y-2 text-sm text-slate-300">
-          <a
-            href="#analyzer"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-cyan-400"
+        <div className="md:hidden px-4 pt-3 pb-4 bg-navy-900/95 border-b border-slate-800 space-y-2 text-sm text-slate-300">
+          <button
+            onClick={() => {
+              onViewChange?.("studio");
+              setMobileMenuOpen(false);
+            }}
+            className={`w-full text-left py-2 px-3 rounded-lg flex items-center space-x-2 ${
+              activeView === "studio"
+                ? "bg-cyan-500/20 text-cyan-300 font-bold"
+                : "text-slate-300"
+            }`}
           >
-            Diagnostic Analyzer
-          </a>
-          <a
-            href="#explainability"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-cyan-400"
+            <BarChart2 className="w-4 h-4" />
+            <span>Research Benchmark Studio</span>
+          </button>
+          <button
+            onClick={() => {
+              onViewChange?.("clinical");
+              setMobileMenuOpen(false);
+            }}
+            className={`w-full text-left py-2 px-3 rounded-lg flex items-center space-x-2 ${
+              activeView === "clinical"
+                ? "bg-teal-500/20 text-teal-300 font-bold"
+                : "text-slate-300"
+            }`}
           >
-            ViT Grad-CAM
-          </a>
-          <a
-            href="#metrics"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-cyan-400"
-          >
-            Evaluation Metrics
-          </a>
-          <a
-            href="#architecture"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-cyan-400"
-          >
-            ViT Architecture
-          </a>
-          <a
-            href="#dataset"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-cyan-400"
-          >
-            BUSI Dataset
-          </a>
+            <Activity className="w-4 h-4" />
+            <span>Ultrasound ViT Diagnostics</span>
+          </button>
         </div>
       )}
     </nav>
